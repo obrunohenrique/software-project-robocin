@@ -74,8 +74,8 @@ class Navigation:
   def navigate_to_goal(robot: Robot, goal: Point, obstacles: List[Point], sensing_radius: float):
     # Constants
     SAFE_DISTANCE = 100  # Minimum safe distance from obstacles (mm)
-    KP_ANGLE = 0.5       # Proportional constant for angular velocity
-    KP_SPEED = 1.0       # Proportional constant for linear speed
+    KP_ANGLE = 0.3       # Proportional constant for angular velocity
+    KP_SPEED = 0.5       # Proportional constant for linear speed
 
     robot_pos = Point(robot.x * M_TO_MM, robot.y * M_TO_MM)
     goal_pos = Point(goal.x * M_TO_MM, goal.y * M_TO_MM)
@@ -112,4 +112,11 @@ class Navigation:
     linear_velocity = min(MAX_VELOCITY, KP_SPEED * distance_to_sub_goal)
     angular_velocity = KP_ANGLE * angle_error
 
-    return linear_velocity, angular_velocity
+    # Encapsulate the linear velocity to point towards the sub-goal
+    linear_velocity_point = Point(
+        linear_velocity * math.cos(target_angle),
+        linear_velocity * math.sin(target_angle)
+    )
+
+    return linear_velocity_point, angular_velocity
+
